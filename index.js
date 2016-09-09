@@ -14,30 +14,39 @@ const styles = StyleSheet.create({
   container : {
     flex : 1,
   },
+  input: {
+    height : 50,
+    borderRadius : 3,
+    borderWidth : 1,
+    borderColor : '#D7D7D7',
+    padding : 15,
+    flexWrap: 'wrap',
+    flex : 6,
+  },
   list: {
-    ...border,
-    backgroundColor: 'white',
+    backgroundColor: '#d0d0d0',
     borderTopWidth: 0,
+    margin: 10,
+    top : 50,
     marginTop: 0,
+    position : 'absolute',
+    left : 0,
+    right : 0,
     width : width,
+    maxHeight : 100,
   },
   wrapper: {
-    flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 3,
-    marginBottom: 2,
-  },
-  spacer: {
-    flexWrap: 'wrap',
-    height: 36,
-    width: 0,
-    backgroundColor: "red"
+    marginBottom : 2,
+    alignItems: 'flex-start'
   },
   textInput: {
     height: 36,
     fontSize: 16,
     flex: .6,
+    marginBottom: 6,
     flexWrap: 'wrap',
   },
   tag: {
@@ -171,19 +180,25 @@ const TagSugesti = React.createClass({
 
   _renderItems : function () {
     const { listStyle, renderItem } = this.props;
-    const { dataSource } = this.state;
+    const { dataSource, showResults } = this.state;
+    var myIndex = {};
+    if (showResults) {
+      myIndex = { zIndex : 1};
+    } else {
+      myIndex = {};
+    }
     return (
       <ListView
         ref = "listItem"
         dataSource={dataSource}
         keyboardShouldPersistTaps = {true}
         renderRow={renderItem}
-        style = {[styles.list, listStyle]}/>
-    )
+        style = {[styles.list, myIndex , listStyle]}/>
+    );
   },
 
   render : function () {
-    const { showResults , text } = this.state;
+    const {text } = this.state;
     let {value, inputProps} = this.props;
 
     let defaultInputProps = {
@@ -201,10 +216,7 @@ const TagSugesti = React.createClass({
     let inputColor = this.props.inputColor || "#000";
 
     return (
-      <TouchableWithoutFeedback
-        onPress = {() => this.refs.tagInput.focus()}
-        onLayout = {this.measureWrapper}
-        style = {{flex: 1}}>
+      <View>
         <View
           style = {styles.wrapper}
           ref = "wrapper"
@@ -225,22 +237,22 @@ const TagSugesti = React.createClass({
               </TouchableOpacity>
             )
           })}
-          <View style = {[styles.container, this.props.containerStyle]}>
-            <View>
-              <TextInput
-                ref = "tagInput"
-                {...inputProps}
-                blurOnSubmit = {false}
-                onKeyPress = {this.onKeyPress}
-                value = {this.state.text}
-                style = {[styles.textInput, {color: inputColor}, this.props.style]}
-                onChange = {this.onChange}
-                onSubmitEditing = {this.parseTags}/>
-            </View>
-            {showResults && this._renderItems()}
-          </View>
         </View>
-      </TouchableWithoutFeedback>
+        <View style = {[styles.container, this.props.containerStyle]}>
+          <View>
+            <TextInput
+              ref = "tagInput"
+              {...inputProps}
+              blurOnSubmit = {false}
+              onKeyPress = {this.onKeyPress}
+              value = {this.state.text}
+              style = {[styles.textInput, {color: inputColor}, this.props.style]}
+              onChange = {this.onChange}
+              onSubmitEditing = {this.parseTags}/>
+          </View>
+          {this._renderItems()}
+        </View>
+      </View>
     );
   },
 });
